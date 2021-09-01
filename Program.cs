@@ -5,15 +5,20 @@ namespace AutomatasII
     class Program
     {
         static void Main(string[] args)
-        {
+        {            
             try
             {
-                using (Lenguaje l = new Lenguaje("C:\\Archivos\\suma.cpp"))
+                using (Lenguaje l = new Lenguaje("C:\\Archivos\\suma.cpp"))                
                 {
-                    l.Program();
+                    /*while (!l.FinDeArchivo())
+                    {
+                        l.NextToken();
+                    }*/
+                    l.Programa();
+
                 }
             }
-            catch (Exception e)
+            catch (Error e)
             {
                 Console.WriteLine(e.Message);
             }

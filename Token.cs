@@ -1,36 +1,39 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace AutomatasII
 {
-    class Token
+    class Token: Error
     {
-        public enum Clasificaciones
+        public enum clasificaciones
         {
-            identificador, numero, asignacion, inicializacion, caracter,
-            FinSentencia, OperadorLogico, OperadorRelacional, OperadorTermino,
-            OperadorFactor, IncrementoTermino, IncrementoFactor, Cadena, OperadorTernario,
-            TipoDato, Zona, Condicion, ciclo, IniciodeBloque, FindeBloque, FlujoEntrada, FlujoSalida,
+            identificador, numero, asignacion, inicializacion,
+            finSentencia, operadorLogico, operadorRelacional,
+            operadorTermino, operadorFactor, incrementoTermino,
+            incrementoFactor, cadena, operadorTernario, caracter,
+            tipoDato, zona, condicion, ciclo, inicioBloque, finBloque,
+            flujoEntrada, flujoSalida
         }
         private string contenido;
-        private Clasificaciones clasificacion;
+        private clasificaciones clasificacion;
 
-        public void SetContenido(string contenido)
+        public void setContenido(string contenido)
         {
             this.contenido = contenido;
         }
 
-        public void SetClasificacion(Clasificaciones clasificacion)
+        public void setClasificacion(clasificaciones clasificacion)
         {
             this.clasificacion = clasificacion;
         }
 
-        public string GetContenido()
+        public string getContenido()
         {
             return contenido;
         }
-        public Clasificaciones GetClasificacion()
+
+        public clasificaciones getClasificacion()
         {
             return clasificacion;
         }

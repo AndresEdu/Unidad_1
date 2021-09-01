@@ -1,48 +1,54 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace AutomatasII
 {
-    class Sintaxis : Lexico
+    class Sintaxis: Lexico
     {
+        protected int caracterAnterior;
         public Sintaxis()
         {
-            Console.WriteLine("Iniciando analisis Sintatico");
+            Console.WriteLine("Iniciando analisis sintactico.");
+            caracterAnterior = 0;
             NextToken();
         }
-        public Sintaxis(String nombre) : base(nombre)
 
+        public Sintaxis(string nombre): base(nombre)
         {
-            Console.WriteLine("Iniciando analisis Sintatico");
+            Console.WriteLine("Iniciando analisis sintactico.");
+            caracterAnterior = 0;
             NextToken();
         }
-        protected void match(string espera)
-        {
 
-            if (espera == GetContenido())
-            {
+        public void match(string espera)
+        {
+            // Console.WriteLine(getContenido() + " = " + espera);
+            if (espera == getContenido())
+            {                
                 NextToken();
+                caracterAnterior = caracter;
+            }
+            else
+            {                
+                throw new Error(bitacora, "Error de sintaxis: Se espera un " + espera + " (" + linea + ", " + caracter + ")");
+            }
+        }
+
+        public void match(clasificaciones espera)
+        {
+            // Console.WriteLine(getContenido() + " = " + espera);
+            if (espera == getClasificacion())
+            {
+                caracterAnterior = caracter;
+                NextToken();                
             }
             else
             {
-                bitacora.WriteLine("Error de sintaxis: se espera un " + espera + ". Linea: " + linea +" Caracter: "+ caracter);
-                throw new Exception("Error de sintaxis: se espera un " + espera+". Linea: "+ linea + " Caracter: " + caracter);
+                throw new Error(bitacora, "Error de sintaxis: Se espera un " + espera + " (" + linea + ", " + caracter + ")");
             }
         }
 
-        protected void match(Clasificaciones espera)
-        {
-            if (espera == GetClasificacion())
-            {
-                NextToken();
-            }
-            else
-            {
-                bitacora.WriteLine("Error de sintaxis: se espera un " + espera + ". Linea: " + linea + " Caracter: " + caracter);
-                throw new Exception("Error de sintaxis: se espera un " + espera + ". Linea: " + linea + " Caracter: " + caracter);
-            }
-        }
-
+        
     }
 }

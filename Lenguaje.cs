@@ -1,44 +1,46 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
-/*
-// *Requerimiento 1:Asignar una expresion matematica a la hora de declarare una variable.
-// *Requerimiento 2: En la condición debe de ir Expresion operadorRelacional Expresion.
-// *Requerimiento 3: Implementar el For
-// *Requerimiento 4: Implementar el while
-// *Requerimiento 5: Implementar el Do-While
-*/
+
+// ✔ Requerimiento 1: Poder asignar una expresión matemática al momento de declarar una variable o una
+//                     lista de variables.
+// ✔ Requerimiento 2: En la condicion debe ir Expresion operadorRelacional Expresion
+// ✔ Requerimiento 3: Implementar el For 
+// ✔ Requerimiento 4: Implementar el While
+// ✔ Requerimiento 5: Implementar el DoWhile
+
 namespace AutomatasII
 {
-    class Lenguaje : Sintaxis
+    class Lenguaje: Sintaxis
     {
         public Lenguaje()
         {
-            Console.WriteLine("Iniciando analisis gramatical");
-        }
-        public Lenguaje(string nombre) : base(nombre)
-        {
-            Console.WriteLine("Iniciando analisis gramatical");
+            Console.WriteLine("Iniciando analisis gramatical.");
         }
 
-        //Programa --> Libreria Main
-        public void Program()
+        public Lenguaje(string nombre): base(nombre)
+        {
+            Console.WriteLine("Iniciando analisis gramatical.");
+        }
+
+        // Programa -> Libreria Main
+        public void Programa()
         {
             Libreria();
             Main();
         }
 
-        //Libreria --> ¿ #include < identificador (.h)? > Libreria() ?
+        // Libreria -> (#include <identificador(.h)?> Libreria) ?
         private void Libreria()
-        {
-            if (GetContenido() == "#")
+        {            
+            if (getContenido() == "#")
             {
                 match("#");
                 match("include");
                 match("<");
-                match(Token.Clasificaciones.identificador);
+                match(Token.clasificaciones.identificador);
 
-                if (GetContenido() == ".")
+                if (getContenido() == ".")
                 {
                     match(".");
                     match("h");
@@ -50,223 +52,231 @@ namespace AutomatasII
             }
         }
 
-        // Main -> void main(){ (Variables)? Instrucciones }
+        // Main -> tipoDato main() BloqueInstrucciones 
         private void Main()
         {
-            match(Clasificaciones.TipoDato);
+            match(clasificaciones.tipoDato);
             match("main");
             match("(");
             match(")");
 
-            BloquedeInstrucciones();
+            BloqueInstrucciones();            
         }
 
-        // Bloque Instrucciones -> {intrucciones]
-        private void BloquedeInstrucciones() 
+        // BloqueInstrucciones -> { Instrucciones }
+        private void BloqueInstrucciones()
         {
-            match(Clasificaciones.IniciodeBloque);
+            match(clasificaciones.inicioBloque);
 
             Instrucciones();
 
-            match(Clasificaciones.FindeBloque);
+            match(clasificaciones.finBloque);
         }
 
-        //Lista_IDs -> identificador (,Lista_IDs)?
+        // Lista_IDs -> identificador (= Expresion)? (,Lista_IDs)? 
         private void Lista_IDs()
         {
-            match(Clasificaciones.identificador);
+            match(clasificaciones.identificador);
 
-            if (GetClasificacion() == Clasificaciones.asignacion)
+            if (getClasificacion() == clasificaciones.asignacion)
             {
-                match(Clasificaciones.asignacion);
+                match(clasificaciones.asignacion);
                 Expresion();
             }
 
-            if (GetContenido() == ",")
+            if (getContenido() == ",")
             {
                 match(",");
                 Lista_IDs();
             }
         }
 
-        //Variables -> tipoDato List_IDs; 
+        // Variables -> tipoDato Lista_IDs; 
         private void Variables()
         {
-            match(Clasificaciones.TipoDato);
+            match(clasificaciones.tipoDato);
             Lista_IDs();
-            match(Clasificaciones.FinSentencia);
-
+            match(clasificaciones.finSentencia);           
         }
 
-        //Instruccion -> (inicializacion | printf(identificador | cadena | numero)) ;
-
+        // Instruccion -> (If | cin | cout | const | Variables | asignacion) ;
         private void Instruccion()
         {
-            if (GetContenido() == "if")
+            if (getContenido() == "do")
             {
-                IF();
+                DoWhile();
             }
-            else if (GetContenido() == "while")
+            else if (getContenido() == "while")
             {
-                WHILE();
+                While();
             }
-            else if (GetContenido() == "for")
+            else if (getContenido() == "for")
             {
-                FOR();
+                For();
             }
-            else if (GetContenido() == "do")
+            else if (getContenido() == "if")
             {
-                DOWHILE();
+                If();
             }
-            else if (GetContenido() == "cin")
+            else if (getContenido() == "cin")
             {
                 match("cin");
-                match(Clasificaciones.FlujoEntrada);
-                match(Clasificaciones.identificador);
-                match(Clasificaciones.FinSentencia);
+                match(clasificaciones.flujoEntrada);
+                match(clasificaciones.identificador);
+                match(clasificaciones.finSentencia);
             }
-            else if (GetContenido() == "cout")
+            else if (getContenido() == "cout")
             {
                 match("cout");
                 ListaFlujoSalida();
-                match(Clasificaciones.FinSentencia);
+                match(clasificaciones.finSentencia);
             }
-            else if (GetContenido() == "const")
+            else if (getContenido() == "const")
             {
                 Constante();
             }
-
-            else if (GetClasificacion() == Clasificaciones.TipoDato) 
+            else if (getClasificacion() == clasificaciones.tipoDato)
             {
                 Variables();
-            }
+            }            
             else
             {
-                match(Clasificaciones.identificador);
-                match(Clasificaciones.asignacion);
+                match(clasificaciones.identificador);
+                match(clasificaciones.asignacion);
 
-                
-                if (GetClasificacion() == Clasificaciones.Cadena)
+                if (getClasificacion() == clasificaciones.cadena)
                 {
-                    match(Clasificaciones.Cadena);
+                    match(clasificaciones.cadena);
                 }
                 else
                 {
                     Expresion();
-                }
-                match(Clasificaciones.FinSentencia); 
+                }                
+
+                match(clasificaciones.finSentencia);
             }
         }
 
-        //Instrucciones -> Instruccion Instrucciones?
+        // Instrucciones -> Instruccion Instrucciones?
         private void Instrucciones()
         {
             Instruccion();
 
-            if (GetClasificacion() != Clasificaciones.FindeBloque)
+            if (getClasificacion() != clasificaciones.finBloque)
             {
                 Instrucciones();
             }
         }
 
-        //Constante -> const TipoDato identificador = numero | cadena;
+        // Constante -> const tipoDato identificador = numero | cadena;
         private void Constante()
         {
             match("const");
-            match(Clasificaciones.TipoDato);
-            match(Clasificaciones.identificador);
-            match(Clasificaciones.asignacion);
+            match(clasificaciones.tipoDato);
+            match(clasificaciones.identificador);
+            match(clasificaciones.asignacion);
 
-            if (GetClasificacion() == Clasificaciones.numero)
+            if (getClasificacion() == clasificaciones.numero)
             {
-                match(Clasificaciones.numero);
+                match(clasificaciones.numero);
             }
             else
             {
-                match(Clasificaciones.Cadena);
+                match(clasificaciones.cadena);
             }
-
-            match(Clasificaciones.FinSentencia);
-
+         
+            match(clasificaciones.finSentencia);
         }
 
-        //ListaFlujoSalida -> << cadena | identificador | numero (ListaFlujoSalida)?
+        // ListaFlujoSalida -> << cadena | identificador | numero (ListaFlujoSalida)?
         private void ListaFlujoSalida()
         {
-            match(Clasificaciones.FlujoSalida);
-            if (GetClasificacion() == Clasificaciones.numero)
+            match(clasificaciones.flujoSalida);
+
+            if (getClasificacion() == clasificaciones.numero)
             {
-                match(Clasificaciones.numero);
+                match(clasificaciones.numero);
             }
-            else if (GetClasificacion() == Clasificaciones.Cadena)
+            else if (getClasificacion() == clasificaciones.cadena)
             {
-                match(Clasificaciones.Cadena);
+                match(clasificaciones.cadena);
             }
             else
             {
-                match(Clasificaciones.identificador);
+                match(clasificaciones.identificador);
             }
-            
-            if (GetClasificacion() == Clasificaciones.FlujoSalida)
+
+            if (getClasificacion() == clasificaciones.flujoSalida)
             {
                 ListaFlujoSalida();
             }
-            
         }
 
-        //Condicion -> identificador opoeraddorrelacional identificador
-        private void Condicion() 
+        // If -> if (Condicion) { BloqueInstrucciones } (else BloqueInstrucciones)?
+        private void If()
+        {
+            match("if");
+            match("(");
+            Condicion();
+            match(")");
+            BloqueInstrucciones();
+
+            if (getContenido() == "else")
+            {
+                match("else");
+                BloqueInstrucciones();
+            }
+        }
+
+        // Condicion -> Expresion operadorRelacional Expresion
+        private void Condicion()
         {
             Expresion();
-            match(Clasificaciones.OperadorRelacional);
+            match(clasificaciones.operadorRelacional);
             Expresion();
         }
 
-        //Expresion -> Termino MasTermino
-        //x26 = (3+5)*8-(10-4)/2;
+        // x26 = (3+5)*8-(10-4)/2;
+        // Expresion -> Termino MasTermino 
         private void Expresion()
         {
             Termino();
             MasTermino();
         }
-
-        //MasTermino -> (operadorTermino Termino)?
+        // MasTermino -> (operadorTermino Termino)?
         private void MasTermino()
         {
-            if (GetClasificacion() == Clasificaciones.OperadorTermino)
+            if (getClasificacion() == clasificaciones.operadorTermino)
             {
-                match(Clasificaciones.OperadorTermino);
+                match(clasificaciones.operadorTermino);
                 Termino();
             }
         }
-
-        //Termino -> Factor PorFactor
+        // Termino -> Factor PorFactor
         private void Termino()
         {
             Factor();
             PorFactor();
         }
-
-        //PorFactor -> (operadorFactor Factor)?
+        // PorFactor -> (operadorFactor Factor)?
         private void PorFactor()
         {
-            if (GetClasificacion() == Clasificaciones.OperadorFactor)
+            if (getClasificacion() == clasificaciones.operadorFactor)
             {
-                match(Clasificaciones.OperadorFactor);
+                match(clasificaciones.operadorFactor);
                 Factor();
             }
         }
-
-        //Factor -> identificard | numero | ( Expresion )
+        // Factor -> identificador | numero | ( Expresion )
         private void Factor()
         {
-            if (GetClasificacion() == Clasificaciones.identificador)
+            if (getClasificacion() == clasificaciones.identificador)
             {
-                match(Clasificaciones.identificador);
+                match(clasificaciones.identificador);
             }
-            else if (GetClasificacion() == Clasificaciones.numero)
+            else if (getClasificacion() == clasificaciones.numero)
             {
-                match(Clasificaciones.numero);
+                match(clasificaciones.numero);
             }
             else
             {
@@ -276,61 +286,54 @@ namespace AutomatasII
             }
         }
 
-
-        //if -> ( coindicion ) bloquedeInstrucciones (else bloquedeInstrucciones)?
-        private void IF()
-        {
-            match("if");
-            match("(");
-            Condicion();
-            match(")");
-
-            BloquedeInstrucciones();
-
-            if (GetContenido() == "else")
-            {
-                match("else");
-                BloquedeInstrucciones();
-            }
-        }
-        //For -> for(identificador = Expresion; Condicion; identificador incrementoTermino) BloqueInstrucciones
-        private void FOR()
+        // For -> for (identificador = Expresion; Condicion; identificador incrementoTermino) BloqueInstrucciones
+        private void For()
         {
             match("for");
+
             match("(");
-            match(Clasificaciones.identificador);
-            match(Clasificaciones.asignacion);
+
+            match(clasificaciones.identificador);
+            match(clasificaciones.asignacion);
             Expresion();
-            match(Clasificaciones.FinSentencia);
+            match(clasificaciones.finSentencia);
+
             Condicion();
-            match(Clasificaciones.FinSentencia);
-            match(Clasificaciones.identificador);
-            match(Clasificaciones.IncrementoTermino);
+            match(clasificaciones.finSentencia);
+
+            match(clasificaciones.identificador);
+            match(clasificaciones.incrementoTermino);
+
             match(")");
-            BloquedeInstrucciones();
+
+            BloqueInstrucciones();
         }
 
-        //While -> while (Condicion) BloqueInstrucciones
-        private void WHILE()
+        // While -> while (Condicion) BloqueInstrucciones
+        private void While()
         {
             match("while");
+
             match("(");
             Condicion();
             match(")");
-            BloquedeInstrucciones();
-        }
 
-        //DoWhile -> do BloqueInstrucciones while(Condicion);
-        private void DOWHILE()
+            BloqueInstrucciones();
+        }
+        
+        // DoWhile -> do BloqueInstrucciones while (Condicion);
+        private void DoWhile()
         {
             match("do");
-            BloquedeInstrucciones();
+
+            BloqueInstrucciones();
+
             match("while");
+
             match("(");
             Condicion();
             match(")");
-            match(Clasificaciones.FinSentencia);
-
+            match(clasificaciones.finSentencia);
         }
     }
 }
