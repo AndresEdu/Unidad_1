@@ -5,7 +5,7 @@ using System.IO;
 
 namespace AutomatasII
 {
-    class Lexico: Token, IDisposable
+    class Lexico : Token, IDisposable
     {
         private StreamReader archivo;
         protected StreamWriter bitacora;
@@ -13,7 +13,7 @@ namespace AutomatasII
         protected int linea, caracter;
         const int F = -1;
         const int E = -2;
-        int[,] trand   = { // WS,EF, L, D, ., +, -, E, =, :, ;, &, |, !, >, <, *, /, %, ", ', ?,La, {, },#10
+        int[,] trand = { // WS,EF, L, D, ., +, -, E, =, :, ;, &, |, !, >, <, *, /, %, ", ', ?,La, {, },#10
                             {  0, F, 1, 2,29,17,18, 1, 8, 9,11,12,13,15,26,27,20,32,20,22,24,28,29,30,31, 0 },//0
                             {  F, F, 1, 1, F, F, F, 1, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F },//1
                             {  F, F, F, 2, 3, F, F, 5, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F },//2
@@ -97,7 +97,7 @@ namespace AutomatasII
             }
 
             if (File.Exists(nombre))
-            {                
+            {
                 archivo = new StreamReader(nombre);
 
                 string log = Path.ChangeExtension(nombre, "log");
@@ -166,7 +166,7 @@ namespace AutomatasII
             }
 
             setContenido(palabra);
-            
+
             if (estado == -2)
             {
                 if (getClasificacion() == clasificaciones.cadena)
@@ -180,11 +180,11 @@ namespace AutomatasII
                 else
                 {
                     throw new Error(bitacora, "Error lexico: Se esperaba un cierre de comentario (*/). (" + linea + ", " + caracter + ")");
-                }                
+                }
             }
             else if (getClasificacion() == clasificaciones.identificador)
             {
-                
+
                 switch (palabra)
                 {
                     case "char":
@@ -213,12 +213,16 @@ namespace AutomatasII
                         break;
                 }
 
+            }
+            if (getContenido() != "")
+            {
                 bitacora.WriteLine("Token = " + getContenido());
                 bitacora.WriteLine("Clasificacion = " + getClasificacion());
+
             }
         }
 
-        
+
 
         private void clasificar(int estado)
         {
@@ -282,10 +286,10 @@ namespace AutomatasII
                     setClasificacion(clasificaciones.operadorTernario);
                     break;
                 case 36:
-                    setClasificacion(clasificaciones.flujoSalida);
+                    setClasificacion(clasificaciones.flujoEntrada);
                     break;
                 case 37:
-                    setClasificacion(clasificaciones.flujoEntrada);
+                    setClasificacion(clasificaciones.flujoSalida);
                     break;
             }
         }

@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+//✔
 
-// ✔ Requerimiento 1: Poder asignar una expresión matemática al momento de declarar una variable o una
-//                     lista de variables.
-// ✔ Requerimiento 2: En la condicion debe ir Expresion operadorRelacional Expresion
-// ✔ Requerimiento 3: Implementar el For 
-// ✔ Requerimiento 4: Implementar el While
-// ✔ Requerimiento 5: Implementar el DoWhile
+// Requerimiento 1: implementar las secuencias de escape: \n, \t cuando se imprime una cadena
+//                                                        y eliminar las dobles comillas.
+// 
 
 namespace AutomatasII
 {
-    class Lenguaje: Sintaxis
+    class Lenguaje : Sintaxis
     {
         public Lenguaje()
         {
             Console.WriteLine("Iniciando analisis gramatical.");
         }
 
-        public Lenguaje(string nombre): base(nombre)
+        public Lenguaje(string nombre) : base(nombre)
         {
             Console.WriteLine("Iniciando analisis gramatical.");
         }
@@ -32,13 +30,13 @@ namespace AutomatasII
 
         // Libreria -> (#include <identificador(.h)?> Libreria) ?
         private void Libreria()
-        {            
+        {
             if (getContenido() == "#")
             {
                 match("#");
                 match("include");
                 match("<");
-                match(Token.clasificaciones.identificador);
+                match(clasificaciones.identificador);
 
                 if (getContenido() == ".")
                 {
@@ -60,7 +58,7 @@ namespace AutomatasII
             match("(");
             match(")");
 
-            BloqueInstrucciones();            
+            BloqueInstrucciones();
         }
 
         // BloqueInstrucciones -> { Instrucciones }
@@ -76,7 +74,8 @@ namespace AutomatasII
         // Lista_IDs -> identificador (= Expresion)? (,Lista_IDs)? 
         private void Lista_IDs()
         {
-            match(clasificaciones.identificador);
+
+            match(clasificaciones.identificador); //Validar existencia
 
             if (getClasificacion() == clasificaciones.asignacion)
             {
@@ -96,7 +95,7 @@ namespace AutomatasII
         {
             match(clasificaciones.tipoDato);
             Lista_IDs();
-            match(clasificaciones.finSentencia);           
+            match(clasificaciones.finSentencia);
         }
 
         // Instruccion -> (If | cin | cout | const | Variables | asignacion) ;
@@ -122,7 +121,7 @@ namespace AutomatasII
             {
                 match("cin");
                 match(clasificaciones.flujoEntrada);
-                match(clasificaciones.identificador);
+                match(clasificaciones.identificador); //Validar existencia
                 match(clasificaciones.finSentencia);
             }
             else if (getContenido() == "cout")
@@ -138,10 +137,11 @@ namespace AutomatasII
             else if (getClasificacion() == clasificaciones.tipoDato)
             {
                 Variables();
-            }            
+            }
             else
             {
-                match(clasificaciones.identificador);
+                //Console.Write(getContenido() + " = ");
+                match(clasificaciones.identificador); //Validar existencia
                 match(clasificaciones.asignacion);
 
                 if (getClasificacion() == clasificaciones.cadena)
@@ -151,7 +151,7 @@ namespace AutomatasII
                 else
                 {
                     Expresion();
-                }                
+                }
 
                 match(clasificaciones.finSentencia);
             }
@@ -173,7 +173,7 @@ namespace AutomatasII
         {
             match("const");
             match(clasificaciones.tipoDato);
-            match(clasificaciones.identificador);
+            match(clasificaciones.identificador); //Validar duplicidad
             match(clasificaciones.asignacion);
 
             if (getClasificacion() == clasificaciones.numero)
@@ -184,7 +184,7 @@ namespace AutomatasII
             {
                 match(clasificaciones.cadena);
             }
-         
+
             match(clasificaciones.finSentencia);
         }
 
@@ -195,15 +195,18 @@ namespace AutomatasII
 
             if (getClasificacion() == clasificaciones.numero)
             {
+                Console.Write(getContenido());
                 match(clasificaciones.numero);
             }
             else if (getClasificacion() == clasificaciones.cadena)
             {
+                Console.Write(getContenido());
                 match(clasificaciones.cadena);
             }
             else
             {
-                match(clasificaciones.identificador);
+                Console.Write(getContenido());
+                match(clasificaciones.identificador); //Validar existencia
             }
 
             if (getClasificacion() == clasificaciones.flujoSalida)
@@ -248,6 +251,7 @@ namespace AutomatasII
         {
             if (getClasificacion() == clasificaciones.operadorTermino)
             {
+                Console.Write(getContenido() + " ");
                 match(clasificaciones.operadorTermino);
                 Termino();
             }
@@ -263,6 +267,7 @@ namespace AutomatasII
         {
             if (getClasificacion() == clasificaciones.operadorFactor)
             {
+                Console.Write(getContenido() + " ");
                 match(clasificaciones.operadorFactor);
                 Factor();
             }
@@ -272,10 +277,12 @@ namespace AutomatasII
         {
             if (getClasificacion() == clasificaciones.identificador)
             {
-                match(clasificaciones.identificador);
+                Console.Write(getContenido() + " ");
+                match(clasificaciones.identificador); //Validar existencia
             }
             else if (getClasificacion() == clasificaciones.numero)
             {
+                Console.Write(getContenido() + " ");
                 match(clasificaciones.numero);
             }
             else
@@ -293,7 +300,7 @@ namespace AutomatasII
 
             match("(");
 
-            match(clasificaciones.identificador);
+            match(clasificaciones.identificador); //Validar existencia
             match(clasificaciones.asignacion);
             Expresion();
             match(clasificaciones.finSentencia);
@@ -301,7 +308,7 @@ namespace AutomatasII
             Condicion();
             match(clasificaciones.finSentencia);
 
-            match(clasificaciones.identificador);
+            match(clasificaciones.identificador); //Validar existencia
             match(clasificaciones.incrementoTermino);
 
             match(")");
@@ -320,7 +327,7 @@ namespace AutomatasII
 
             BloqueInstrucciones();
         }
-        
+
         // DoWhile -> do BloqueInstrucciones while (Condicion);
         private void DoWhile()
         {
@@ -335,5 +342,9 @@ namespace AutomatasII
             match(")");
             match(clasificaciones.finSentencia);
         }
+
+        // x26 = (3 + 5) * 8 - (10 - 4) / 2
+        // x26 = 3 + 5 * 8 - 10 - 4 / 2
+        // x26 = 3 5 + 8 * 10 4 - 2 / -
     }
 }

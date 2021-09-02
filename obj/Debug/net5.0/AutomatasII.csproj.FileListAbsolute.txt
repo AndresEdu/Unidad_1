@@ -1,0 +1,16 @@
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\bin\Debug\net5.0\AutomatasII.exe
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\bin\Debug\net5.0\AutomatasII.deps.json
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\bin\Debug\net5.0\AutomatasII.runtimeconfig.json
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\bin\Debug\net5.0\AutomatasII.runtimeconfig.dev.json
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\bin\Debug\net5.0\AutomatasII.dll
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\bin\Debug\net5.0\ref\AutomatasII.dll
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\bin\Debug\net5.0\AutomatasII.pdb
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\obj\Debug\net5.0\AutomatasII.csproj.AssemblyReference.cache
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\obj\Debug\net5.0\AutomatasII.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\obj\Debug\net5.0\AutomatasII.AssemblyInfoInputs.cache
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\obj\Debug\net5.0\AutomatasII.AssemblyInfo.cs
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\obj\Debug\net5.0\AutomatasII.csproj.CoreCompileInputs.cache
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\obj\Debug\net5.0\AutomatasII.dll
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\obj\Debug\net5.0\ref\AutomatasII.dll
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\obj\Debug\net5.0\AutomatasII.pdb
+C:\Users\annia\Desktop\Andres\LenguajesyAutomatasII\Unidad_1\obj\Debug\net5.0\AutomatasII.genruntimeconfig.cache

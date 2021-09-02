@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\annia\\Desktop\\Andres\\LenguajesyAutomatasII\\AutomatasII\\AutomatasII.csproj",
+      "projectUniqueName": "C:\\Users\\annia\\Desktop\\Andres\\LenguajesyAutomatasII\\Unidad_1\\AutomatasII.csproj",
       "projectName": "AutomatasII",
-      "projectPath": "C:\\Users\\annia\\Desktop\\Andres\\LenguajesyAutomatasII\\AutomatasII\\AutomatasII.csproj",
+      "projectPath": "C:\\Users\\annia\\Desktop\\Andres\\LenguajesyAutomatasII\\Unidad_1\\AutomatasII.csproj",
       "packagesPath": "C:\\Users\\annia\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\annia\\Desktop\\Andres\\LenguajesyAutomatasII\\AutomatasII\\obj\\",
+      "outputPath": "C:\\Users\\annia\\Desktop\\Andres\\LenguajesyAutomatasII\\Unidad_1\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\annia\\AppData\\Roaming\\NuGet\\NuGet.Config"
