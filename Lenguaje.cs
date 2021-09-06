@@ -4,20 +4,23 @@ using System.Text;
 //✔
 
 // Requerimiento 1: implementar las secuencias de escape: \n, \t cuando se imprime una cadena
-//                                                        y eliminar las dobles comillas.
+//                                                              y eliminar las dobles comillas.
 // 
 
 namespace AutomatasII
 {
     class Lenguaje : Sintaxis
     {
+        Stack s;
         public Lenguaje()
         {
+            s = new Stack(5);
             Console.WriteLine("Iniciando analisis gramatical.");
         }
 
         public Lenguaje(string nombre) : base(nombre)
         {
+            s = new Stack(5);
             Console.WriteLine("Iniciando analisis gramatical.");
         }
 
@@ -151,6 +154,7 @@ namespace AutomatasII
                 else
                 {
                     Expresion();
+                    Console.Write(s.pop());
                 }
 
                 match(clasificaciones.finSentencia);
@@ -251,9 +255,22 @@ namespace AutomatasII
         {
             if (getClasificacion() == clasificaciones.operadorTermino)
             {
-                Console.Write(getContenido() + " ");
+                string operador = getContenido();
+                float e1 = s.pop(), e2 = s.pop();
+
                 match(clasificaciones.operadorTermino);
                 Termino();
+                Console.Write(operador + " ");
+
+                switch (operador)
+                {
+                    case "+":
+                        s.Push(e2+e1);
+                        break;
+                    case "-":
+                        s.Push(e2-e1);
+                        break;      
+                }
             }
         }
         // Termino -> Factor PorFactor
@@ -267,9 +284,22 @@ namespace AutomatasII
         {
             if (getClasificacion() == clasificaciones.operadorFactor)
             {
-                Console.Write(getContenido() + " ");
+                string operador = getContenido();
+                float e1 = s.pop(), e2 = s.pop();
+                
                 match(clasificaciones.operadorFactor);
                 Factor();
+                Console.Write(operador + " ");
+
+                switch (operador)
+                {
+                    case "*":
+                        s.Push(e2*e1);
+                        break;
+                    case "/":
+                        s.Push(e2/e1);
+                        break;      
+                }
             }
         }
         // Factor -> identificador | numero | ( Expresion )
@@ -283,6 +313,7 @@ namespace AutomatasII
             else if (getClasificacion() == clasificaciones.numero)
             {
                 Console.Write(getContenido() + " ");
+                s.Push(float.Parse(getContenido()));
                 match(clasificaciones.numero);
             }
             else
