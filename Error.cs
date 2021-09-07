@@ -15,9 +15,7 @@ namespace AutomatasII
         public Error(StreamWriter bitacora, string error) : base(error)
         {            
             //string mensaje = error + " linea " + linea + " caracter " + caracter;
-            
-            bitacora.WriteLine(error);            
+            bitacora.WriteLine(error);         
         }
-        
     }
 }
