@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 //✔
 
-// Requerimiento 1: implementar las secuencias de escape: \n, \t cuando se imprime una cadena
+// ✔✔Requerimiento 1: implementar las secuencias de escape: \n, \t cuando se imprime una cadena
 //                                                              y eliminar las dobles comillas.
 // 
 
@@ -204,7 +204,22 @@ namespace AutomatasII
             }
             else if (getClasificacion() == clasificaciones.cadena)
             {
-                Console.Write(getContenido());
+                string secuencias = getContenido();
+
+                if (secuencias.Contains("\""))
+                {
+                    secuencias = secuencias.Replace("\""," ");
+                }
+                if (secuencias.Contains("\\t"))
+                {
+                    secuencias = secuencias.Replace("\\t","\t");
+                }
+                if (secuencias.Contains("\\n"))
+                {
+                    secuencias = secuencias.Replace("\\n","\n");
+                }
+
+                Console.Write(secuencias);
                 match(clasificaciones.cadena);
             }
             else
