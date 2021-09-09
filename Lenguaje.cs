@@ -5,8 +5,8 @@ using System.Text;
 // :)) Requerimiento 1: Implementar las secuencias de escape: \n, \t cuando se imprime una cadena y 
 //                      eliminar las dobles comillas.
 // :)) Requerimiento 2: Levantar excepciones en la clase Stack.
-// Requerimiento 3: Agregar el tipo de dato en el Inserta de ListaVariables.
-//  Requerimiento 4: Validar existencia o duplicidad de variables. Mensaje de error: 
+// :)) Requerimiento 3: Agregar el tipo de dato en el Inserta de ListaVariables.
+// :)) Requerimiento 4: Validar existencia o duplicidad de variables. Mensaje de error: 
 //                  "Error de sintaxis: La variable (x26) no ha sido declarada."
 //                  "Error de sintaxis: La variables (x26) está duplicada." 
 
@@ -91,7 +91,6 @@ namespace AutomatasII
             if(!l.Existe(nombre))
             {
                 match(clasificaciones.identificador); //Validar duplicidad
-                l.Inserta(nombre, Tipo);
             }
             else
             {
@@ -213,7 +212,7 @@ namespace AutomatasII
                 else
                 {
                     Expresion();
-                    Console.Write(s.Pop(bitacora));
+                    Console.WriteLine(s.Pop(bitacora));
                 }
 
                 match(clasificaciones.finSentencia);
