@@ -77,9 +77,7 @@ namespace AutomatasII
         private void BloqueInstrucciones()
         {
             match(clasificaciones.inicioBloque);
-
             Instrucciones();
-
             match(clasificaciones.finBloque);
         }
 
@@ -94,7 +92,6 @@ namespace AutomatasII
             }
             else
             {
-                //levantar excepcion
                 throw new Error(bitacora, "Error de sintaxis:La variable  (" + nombre + ") esta Duplicada. " + "(" + linea + ", " + caracter + ")");
             }
             l.Inserta(nombre, Tipo);
@@ -168,13 +165,13 @@ namespace AutomatasII
                 string nombre = getContenido();
                 if(!l.Existe(nombre))
                 {
-                    //levantar excepcion
                     throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
                 }
                 else
                 {
                     match(clasificaciones.identificador); //Validar existencia
                 }
+
                 match(clasificaciones.finSentencia);
             }
             else if (getContenido() == "cout")
@@ -196,13 +193,13 @@ namespace AutomatasII
                 string nombre = getContenido();
                 if(!l.Existe(nombre))
                 {
-                    //levantar excepcion
                     throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
                 }
                 else
                 {
                     match(clasificaciones.identificador); //Validar existencia
                 }
+
                 match(clasificaciones.asignacion);
 
                 if (getClasificacion() == clasificaciones.cadena)
@@ -264,7 +261,6 @@ namespace AutomatasII
             }
             else
             {
-                //levantar excepcion
                 throw new Error(bitacora, "Error de sintaxis: La constante (" + nombre + ") esta duplicada" + "(" + linea + ", " + caracter + ")");
             }
             
@@ -318,7 +314,6 @@ namespace AutomatasII
                 string nombre = getContenido();
                 if(!l.Existe(nombre))
                 {
-                    //levantar excepcion
                     throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
                 }
                 else
@@ -425,7 +420,6 @@ namespace AutomatasII
                 string nombre = getContenido();
                 if(!l.Existe(nombre))
                 {
-                    //levantar excepcion
                     throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
                 }
                 else
@@ -458,7 +452,6 @@ namespace AutomatasII
             string nombre1 = getContenido();
             if(!l.Existe(nombre1))
             {
-                //levantar excepcion
                 throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre1 + ") no declarada " + "(" + linea + ", " + caracter + ")");
             }
             else
@@ -467,6 +460,7 @@ namespace AutomatasII
             }
 
             match(clasificaciones.asignacion);
+
             Expresion();
             match(clasificaciones.finSentencia);
 
@@ -476,7 +470,6 @@ namespace AutomatasII
             string nombre2 = getContenido();
             if(!l.Existe(nombre2))
             {
-                //levantar excepcion
                 throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre2 + ") no declarada " + "(" + linea + ", " + caracter + ")");
             }
             else
@@ -516,7 +509,6 @@ namespace AutomatasII
             match(")");
             match(clasificaciones.finSentencia);
         }
-
         // x26 = (3 + 5) * 8 - (10 - 4) / 2
         // x26 = 3 + 5 * 8 - 10 - 4 / 2
         // x26 = 3 5 + 8 * 10 4 - 2 / -

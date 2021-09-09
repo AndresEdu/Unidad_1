@@ -24,7 +24,6 @@ namespace AutomatasII
                 bitacora.WriteLine("Push = " + element);
                 elementos[ultimo++] = element; 
             }
-            // else levantar excepción de stack overflow
             else
             {
                 throw new Error(bitacora,"Error: Stack Overflow");
@@ -38,7 +37,6 @@ namespace AutomatasII
                 bitacora.WriteLine("Pop = " + elementos[ultimo-1]);
                 return elementos[--ultimo];
             }
-            // else levantar excepción de stack underflow
             else
             {
                 throw new Error(bitacora,"Error: Stack Underflow");
