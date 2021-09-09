@@ -2,26 +2,33 @@
 using System.Collections.Generic;
 using System.Text;
 
-// ✔✔Requerimiento 1: implementar las secuencias de escape: \n, \t cuando se imprime una cadena
-//
-// ✔✔Requerimiento 2: Levantar excepciones en la clase Stack
-//                                                                                    
-// 
+// :)) Requerimiento 1: Implementar las secuencias de escape: \n, \t cuando se imprime una cadena y 
+//                      eliminar las dobles comillas.
+// :)) Requerimiento 2: Levantar excepciones en la clase Stack.
+// Requerimiento 3: Agregar el tipo de dato en el Inserta de ListaVariables.
+//  Requerimiento 4: Validar existencia o duplicidad de variables. Mensaje de error: 
+//                  "Error de sintaxis: La variable (x26) no ha sido declarada."
+//                  "Error de sintaxis: La variables (x26) está duplicada." 
 
 namespace AutomatasII
 {
     class Lenguaje : Sintaxis
     {
         Stack s;
+        ListaVariables l;
         public Lenguaje()
         {
             s = new Stack(5);
+
+            l = new ListaVariables();
             Console.WriteLine("Iniciando analisis gramatical.");
         }
 
         public Lenguaje(string nombre) : base(nombre)
-        {
-            s = new Stack(5);
+        {   
+            s = new Stack(5);   //s = new Stack(2); Validar Stack Overflow
+            //s.Pop(bitacora);                      Validar Stack Underflow
+            l = new ListaVariables();
             Console.WriteLine("Iniciando analisis gramatical.");
         }
 
@@ -30,6 +37,7 @@ namespace AutomatasII
         {
             Libreria();
             Main();
+            l.imprime(bitacora);
         }
 
         // Libreria -> (#include <identificador(.h)?> Libreria) ?
@@ -76,13 +84,24 @@ namespace AutomatasII
         }
 
         // Lista_IDs -> identificador (= Expresion)? (,Lista_IDs)? 
-        private void Lista_IDs()
+        private void Lista_IDs(Variable.tipo Tipo)
         {
-
-            match(clasificaciones.identificador); //Validar existencia
+            string nombre = getContenido();
+            
+            if(!l.Existe(nombre))
+            {
+                match(clasificaciones.identificador); //Validar duplicidad
+                l.Inserta(nombre, Tipo);
+            }
+            else
+            {
+                //levantar excepcion
+                throw new Error(bitacora, "Error de sintaxis:La variable  (" + nombre + ") esta Duplicada. " + "(" + linea + ", " + caracter + ")");
+            }
+            l.Inserta(nombre, Tipo);
 
             if (getClasificacion() == clasificaciones.asignacion)
-            {
+            {   
                 match(clasificaciones.asignacion);
                 Expresion();
             }
@@ -90,15 +109,36 @@ namespace AutomatasII
             if (getContenido() == ",")
             {
                 match(",");
-                Lista_IDs();
+                Lista_IDs(Tipo);
             }
         }
 
         // Variables -> tipoDato Lista_IDs; 
         private void Variables()
         {
+            string TipoDato = getContenido();
+
             match(clasificaciones.tipoDato);
-            Lista_IDs();
+            Variable.tipo TipodeVariable;
+            switch (TipoDato)
+            {
+                case "int":
+                    TipodeVariable = Variable.tipo.INT;
+                    break;
+                case "float":
+                    TipodeVariable = Variable.tipo.FLOAT;
+                    break;
+                case "char":
+                    TipodeVariable = Variable.tipo.CHAR;
+                    break;
+                case "string":
+                    TipodeVariable = Variable.tipo.STRING;
+                    break;
+                default:
+                    TipodeVariable = Variable.tipo.INT;
+                    break;
+            }
+            Lista_IDs(TipodeVariable);
             match(clasificaciones.finSentencia);
         }
 
@@ -125,7 +165,17 @@ namespace AutomatasII
             {
                 match("cin");
                 match(clasificaciones.flujoEntrada);
-                match(clasificaciones.identificador); //Validar existencia
+
+                string nombre = getContenido();
+                if(!l.Existe(nombre))
+                {
+                    //levantar excepcion
+                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
+                }
+                else
+                {
+                    match(clasificaciones.identificador); //Validar existencia
+                }
                 match(clasificaciones.finSentencia);
             }
             else if (getContenido() == "cout")
@@ -144,8 +194,16 @@ namespace AutomatasII
             }
             else
             {
-                //Console.Write(getContenido() + " = ");
-                match(clasificaciones.identificador); //Validar existencia
+                string nombre = getContenido();
+                if(!l.Existe(nombre))
+                {
+                    //levantar excepcion
+                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
+                }
+                else
+                {
+                    match(clasificaciones.identificador); //Validar existencia
+                }
                 match(clasificaciones.asignacion);
 
                 if (getClasificacion() == clasificaciones.cadena)
@@ -177,9 +235,42 @@ namespace AutomatasII
         private void Constante()
         {
             match("const");
+
+            string TipoDato = getContenido();
             match(clasificaciones.tipoDato);
-            match(clasificaciones.identificador); //Validar duplicidad
-            match(clasificaciones.asignacion);
+            Variable.tipo TipodeVariable;
+            switch (TipoDato)
+            {
+                case "int":
+                    TipodeVariable = Variable.tipo.INT;
+                    break;
+                case "float":
+                    TipodeVariable = Variable.tipo.FLOAT;
+                    break;
+                case "char":
+                    TipodeVariable = Variable.tipo.CHAR;
+                    break;
+                case "string":
+                    TipodeVariable = Variable.tipo.STRING;
+                    break;
+                default:
+                    TipodeVariable = Variable.tipo.INT;
+                    break;
+            }
+
+            string nombre = getContenido();
+            if(!l.Existe(nombre))
+            {
+                match(clasificaciones.identificador); //Validar duplicidad
+            }
+            else
+            {
+                //levantar excepcion
+                throw new Error(bitacora, "Error de sintaxis: La constante (" + nombre + ") esta duplicada" + "(" + linea + ", " + caracter + ")");
+            }
+            
+            l.Inserta(nombre,TipodeVariable);
+            match(clasificaciones.asignacion);  
 
             if (getClasificacion() == clasificaciones.numero)
             {
@@ -225,8 +316,16 @@ namespace AutomatasII
             }
             else
             {
-                Console.Write(getContenido());
-                match(clasificaciones.identificador); //Validar existencia
+                string nombre = getContenido();
+                if(!l.Existe(nombre))
+                {
+                    //levantar excepcion
+                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
+                }
+                else
+                {
+                   match(clasificaciones.identificador); //Validar existencia
+                }
             }
 
             if (getClasificacion() == clasificaciones.flujoSalida)
@@ -324,7 +423,16 @@ namespace AutomatasII
             if (getClasificacion() == clasificaciones.identificador)
             {
                 Console.Write(getContenido() + " ");
-                match(clasificaciones.identificador); //Validar existencia
+                string nombre = getContenido();
+                if(!l.Existe(nombre))
+                {
+                    //levantar excepcion
+                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
+                }
+                else
+                {
+                    match(clasificaciones.identificador); //Validar existencia
+                }
             }
             else if (getClasificacion() == clasificaciones.numero)
             {
@@ -348,7 +456,17 @@ namespace AutomatasII
 
             match("(");
 
-            match(clasificaciones.identificador); //Validar existencia
+            string nombre1 = getContenido();
+            if(!l.Existe(nombre1))
+            {
+                //levantar excepcion
+                throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre1 + ") no declarada " + "(" + linea + ", " + caracter + ")");
+            }
+            else
+            {
+                match(clasificaciones.identificador); //Validar existencia
+            }
+
             match(clasificaciones.asignacion);
             Expresion();
             match(clasificaciones.finSentencia);
@@ -356,7 +474,16 @@ namespace AutomatasII
             Condicion();
             match(clasificaciones.finSentencia);
 
-            match(clasificaciones.identificador); //Validar existencia
+            string nombre2 = getContenido();
+            if(!l.Existe(nombre2))
+            {
+                //levantar excepcion
+                throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre2 + ") no declarada " + "(" + linea + ", " + caracter + ")");
+            }
+            else
+            {
+                match(clasificaciones.identificador); //Validar existencia
+            }
             match(clasificaciones.incrementoTermino);
 
             match(")");

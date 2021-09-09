@@ -120,7 +120,7 @@ namespace AutomatasII
         //~Lexico()
         public void Dispose()
         {
-            Console.WriteLine("\nFinaliza compilacion de " + nombreArchivo);
+            Console.WriteLine("Finaliza compilacion de " + nombreArchivo);
             CerrarArchivos();
         }
 

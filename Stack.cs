@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using overflow;
 
 
 namespace AutomatasII
@@ -19,7 +18,7 @@ namespace AutomatasII
         }
 
         public void Push(float element, StreamWriter bitacora)
-        {
+        {   
             if (ultimo < maxElementos)
             {
                 bitacora.WriteLine("Push = " + element);
@@ -28,7 +27,7 @@ namespace AutomatasII
             // else levantar excepción de stack overflow
             else
             {
-                throw new StackOverflowException("");
+                throw new Error(bitacora,"Error: Stack Overflow");
             }
         }
 
@@ -42,10 +41,8 @@ namespace AutomatasII
             // else levantar excepción de stack underflow
             else
             {
-                throw new System.underflowException();
+                throw new Error(bitacora,"Error: Stack Underflow");
             }
-
-            return 0;
         }
 
         public void Display(StreamWriter bitacora)

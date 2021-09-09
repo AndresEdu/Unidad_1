@@ -20,6 +20,10 @@ namespace AutomatasII
             valor = nuevoValor;
         }
         
+        public string getNombre()
+        {
+            return nombre;
+        }
         public string getValor()
         {
             return valor;

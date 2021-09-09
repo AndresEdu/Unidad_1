@@ -2,7 +2,6 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
-
 namespace AutomatasII
 {
     class Error: Exception
@@ -11,7 +10,6 @@ namespace AutomatasII
         {
 
         }
-
         public Error(StreamWriter bitacora, string error) : base(error)
         {            
             //string mensaje = error + " linea " + linea + " caracter " + caracter;
