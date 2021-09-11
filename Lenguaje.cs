@@ -7,9 +7,9 @@ using System.Text;
 // :)) Requerimiento 2: Levantar excepciones en la clase Stack.
 // :)) Requerimiento 3: Agregar el tipo de dato en el Inserta de ListaVariables.
 // :)) Requerimiento 4: Validar existencia o duplicidad de variables. Mensaje de error: 
-//                  "Error de sintaxis: La variable (x26) no ha sido declarada."
-//                  "Error de sintaxis: La variables (x26) está duplicada." 
-// :)) Requerimiento 5: Modificar el valor de la variable o constante al momento de su declaracion
+//                      "Error de sintaxis: La variable (x26) no ha sido declarada."
+//                      "Error de sintaxis: La variables (x26) está duplicada." 
+// :)) Requerimiento 5: Modificar el valor de la variable o constante al momento de su declaracion.
 
 namespace AutomatasII
 {
@@ -165,15 +165,15 @@ namespace AutomatasII
                 match(clasificaciones.flujoEntrada);
 
                 string nombre = getContenido(); 
-                if(!l.Existe(nombre))
-                {
-                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
-                }
-                else
+                if(l.Existe(nombre))
                 {
                     string entrada = Console.ReadLine();
                     match(clasificaciones.identificador); //Validar existencia
                     l.setValor(nombre,entrada);
+                }
+                else
+                {
+                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
                 }
 
                 match(clasificaciones.finSentencia);
@@ -196,13 +196,13 @@ namespace AutomatasII
             {
                 string nombre = getContenido();
 
-                if(!l.Existe(nombre))
+                if(l.Existe(nombre))
                 {
-                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
+                    match(clasificaciones.identificador); //Validar existencia
                 }
                 else
                 {
-                    match(clasificaciones.identificador); //Validar existencia
+                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
                 }
 
                 match(clasificaciones.asignacion);
@@ -280,12 +280,12 @@ namespace AutomatasII
             if (getClasificacion() == clasificaciones.numero)
             {
                 match(clasificaciones.numero);
-                l.setValor(nombre,getContenido());  //AQUI SE PUEDE USAR UNA VARIABLE
+                l.setValor(nombre,getContenido());  //Se le hace un Set al valor en la lista
             }
             else
             {
                 match(clasificaciones.cadena);
-                l.setValor(nombre,getContenido());  //TAMBIEN AQUI
+                l.setValor(nombre,getContenido());  //Se le hace un Set al valor en la lista
             }
 
             match(clasificaciones.finSentencia);
@@ -324,14 +324,14 @@ namespace AutomatasII
             {
                 string nombre = getContenido();
 
-                if(!l.Existe(nombre))
-                {
-                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
-                }
-                else
+                if(l.Existe(nombre))
                 {
                     Console.Write(l.getValor(nombre));
                     match(clasificaciones.identificador); //Validar existencia
+                }
+                else
+                {
+                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
                 }
             }
 
@@ -381,7 +381,6 @@ namespace AutomatasII
                 match(clasificaciones.operadorTermino);
                 Termino();
                 float e1 = s.Pop(bitacora), e2 = s.Pop(bitacora);                
-                //Console.Write(operador + " ");
 
                 switch (operador)
                 {
@@ -429,18 +428,17 @@ namespace AutomatasII
         {
             if (getClasificacion() == clasificaciones.identificador)
             {
-                //Console.Write(getContenido() + " ");
                 string nombre = getContenido();
 
-                if(!l.Existe(nombre))
-                {
-                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
-                }
-                else
+                if(l.Existe(nombre))
                 {
                     s.Push(float.Parse(l.getValor(getContenido())),bitacora);
                     s.Display(bitacora);
                     match(clasificaciones.identificador); //Validar existencia
+                }
+                else
+                {
+                    throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre + ") no declarada " + "(" + linea + ", " + caracter + ")");
                 }
             }
             else if (getClasificacion() == clasificaciones.numero)
@@ -466,11 +464,11 @@ namespace AutomatasII
             string nombre1 = getContenido();
             if(!l.Existe(nombre1))
             {
-                throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre1 + ") no declarada " + "(" + linea + ", " + caracter + ")");
+                match(clasificaciones.identificador); //Validar existencia
             }
             else
             {
-                match(clasificaciones.identificador); //Validar existencia
+                throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre1 + ") no declarada " + "(" + linea + ", " + caracter + ")");
             }
 
             match(clasificaciones.asignacion);
@@ -481,13 +479,13 @@ namespace AutomatasII
             match(clasificaciones.finSentencia);
 
             string nombre2 = getContenido();
-            if(!l.Existe(nombre2))
+            if(l.Existe(nombre2))
             {
-                throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre2 + ") no declarada " + "(" + linea + ", " + caracter + ")");
+                match(clasificaciones.identificador); //Validar existencia
             }
             else
             {
-                match(clasificaciones.identificador); //Validar existencia
+                throw new Error(bitacora, "Error de sintaxis: Variable (" + nombre2 + ") no declarada " + "(" + linea + ", " + caracter + ")");
             }
             match(clasificaciones.incrementoTermino);
 
