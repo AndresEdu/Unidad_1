@@ -14,9 +14,9 @@ namespace AutomatasII
         Lista = new List<Variable>();
     }
 
-    public void Inserta(string nombre, Variable.tipo tipoDato)
+    public void Inserta(string nombre, Variable.tipo tipoDato, bool esConstante = false)
     {
-        Lista.Add(new Variable (nombre, tipoDato));
+        Lista.Add(new Variable(nombre, tipoDato, esConstante));
     }
 
     public bool Existe(string nombre)
@@ -64,8 +64,9 @@ namespace AutomatasII
         bitacora.WriteLine("Lista de variables");
         foreach (Variable x in Lista)
         {
-            bitacora.WriteLine(x.getNombre()+ " " + x.getValor()+ " " + x.getTipoDato());
+            bitacora.WriteLine(x.getNombre()+ " " + x.getValor()+ " " + x.getTipoDato() + " " + (x.getEsConstante() ? "Constante" : "Variable"));
         }
+
     }
     }
 }
