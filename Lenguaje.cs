@@ -26,7 +26,7 @@ namespace AutomatasII
 
         public Lenguaje(string nombre) : base(nombre)
         {   
-            s = new Stack(2);
+            s = new Stack(5);
             l = new ListaVariables();
             Console.WriteLine("Iniciando analisis gramatical.");
         }
