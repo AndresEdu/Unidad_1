@@ -9,65 +9,64 @@ namespace AutomatasII
         List<Variable>Lista;
 
 
-    public ListaVariables()
-    {
-        Lista = new List<Variable>();
-    }
-
-    public void Inserta(string nombre, Variable.tipo tipoDato, bool esConstante = false)
-    {
-        Lista.Add(new Variable(nombre, tipoDato, esConstante));
-    }
-
-    public bool Existe(string nombre)
-    {
-        return Lista.Exists(x =>  x.getNombre() == nombre);
-    }
-
-    public void setValor(string nombre, string valor)
-    {
-        foreach (Variable x in Lista)
+        public ListaVariables()
         {
-            if (x.getNombre() == nombre)
+            Lista = new List<Variable>();
+        }
+
+        public void Inserta(string nombre, Variable.tipo tipoDato, bool esConstante = false)
+        {
+            Lista.Add(new Variable(nombre, tipoDato, esConstante));
+        }
+
+        public bool Existe(string nombre)
+        {
+            return Lista.Exists(x =>  x.getNombre() == nombre);
+        }
+
+        public void setValor(string nombre, string valor)
+        {
+            foreach (Variable x in Lista)
             {
-                x.setValor(valor);
-                break;
+                if (x.getNombre() == nombre)
+                {
+                    x.setValor(valor);
+                    break;
+                }
             }
         }
-    }
 
-    public string getValor(string nombre)
-    {
-        foreach (Variable x in Lista)
+        public string getValor(string nombre)
         {
-            if (x.getNombre() == nombre)
+            foreach (Variable x in Lista)
             {
-                return x.getValor();
+                if (x.getNombre() == nombre)
+                {
+                    return x.getValor();
+                }
             }
+            return "";
         }
-        return "";
-    }
         public Variable.tipo getTipoDato(string nombre)
-    {
-        foreach (Variable x in Lista)
         {
-            if (x.getNombre() == nombre)
+            foreach (Variable x in Lista)
             {
-                return x.getTipoDato();
+                if (x.getNombre() == nombre)
+                {
+                    return x.getTipoDato();
+                }
+            }   
+            return Variable.tipo.CHAR;
+        }
+
+        public void imprime(StreamWriter bitacora)
+        {
+            bitacora.WriteLine("Lista de variables");
+            foreach (Variable x in Lista)
+            {
+                bitacora.WriteLine(x.getNombre()+ " " + x.getValor()+ " " + x.getTipoDato() + " " + (x.getEsConstante() ? "Constante" : "Variable"));
             }
         }
-        return Variable.tipo.CHAR;
-    }
-
-    public void imprime(StreamWriter bitacora)
-    {
-        bitacora.WriteLine("Lista de variables");
-        foreach (Variable x in Lista)
-        {
-            bitacora.WriteLine(x.getNombre()+ " " + x.getValor()+ " " + x.getTipoDato() + " " + (x.getEsConstante() ? "Constante" : "Variable"));
-        }
-
-    }
     }
 }
 

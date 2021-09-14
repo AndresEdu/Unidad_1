@@ -26,7 +26,7 @@ namespace AutomatasII
 
         public Lenguaje(string nombre) : base(nombre)
         {   
-            s = new Stack(5);
+            s = new Stack(2);
             l = new ListaVariables();
             Console.WriteLine("Iniciando analisis gramatical.");
         }
@@ -100,7 +100,7 @@ namespace AutomatasII
             {   
                 match(clasificaciones.asignacion);
                 Expresion();
-                l.setValor(nombre,s.Pop(bitacora).ToString());
+                l.setValor(nombre,s.Pop(bitacora,linea,caracter).ToString());
             }
 
             if (getContenido() == ",")
@@ -218,7 +218,7 @@ namespace AutomatasII
                 else
                 {
                     Expresion();
-                    valor = s.Pop(bitacora).ToString();
+                    valor = s.Pop(bitacora,linea,caracter).ToString();
                 }
 
                 l.setValor(nombre, valor);
@@ -260,7 +260,7 @@ namespace AutomatasII
                     TipodeVariable = Variable.tipo.STRING;
                     break;
                 default:
-                    TipodeVariable = Variable.tipo.INT;
+                    TipodeVariable = Variable.tipo.CHAR;
                     break;
             }
 
@@ -277,15 +277,16 @@ namespace AutomatasII
             l.Inserta(nombre,TipodeVariable);
             match(clasificaciones.asignacion);  
 
+            
             if (getClasificacion() == clasificaciones.numero)
             {
-                match(clasificaciones.numero);
                 l.setValor(nombre,getContenido());  //Se le hace un Set al valor en la lista
+                match(clasificaciones.numero);
             }
             else
             {
-                match(clasificaciones.cadena);
                 l.setValor(nombre,getContenido());  //Se le hace un Set al valor en la lista
+                match(clasificaciones.cadena);
             }
 
             match(clasificaciones.finSentencia);
@@ -380,15 +381,15 @@ namespace AutomatasII
                 string operador = getContenido();
                 match(clasificaciones.operadorTermino);
                 Termino();
-                float e1 = s.Pop(bitacora), e2 = s.Pop(bitacora);                
+                float e1 = s.Pop(bitacora, linea, caracter), e2 = s.Pop(bitacora, linea, caracter);                
 
                 switch (operador)
                 {
                     case "+":
-                        s.Push(e2+e1,bitacora);
+                        s.Push(e2+e1, bitacora, linea, caracter);
                         break;
                     case "-":
-                        s.Push(e2-e1,bitacora);
+                        s.Push(e2-e1, bitacora, linea, caracter);
                         break;      
                 }
 
@@ -409,15 +410,15 @@ namespace AutomatasII
                 string operador = getContenido();
                 match(clasificaciones.operadorFactor);
                 Factor();
-                float e1 = s.Pop(bitacora), e2 = s.Pop(bitacora);   
+                float e1 = s.Pop(bitacora, linea, caracter), e2 = s.Pop(bitacora, linea, caracter);   
 
                 switch (operador)
                 {
                     case "*":
-                        s.Push(e2*e1, bitacora);
+                        s.Push(e2*e1, bitacora, linea, caracter);
                         break;
                     case "/":
-                        s.Push(e2/e1, bitacora);
+                        s.Push(e2/e1, bitacora, linea, caracter);
                         break;      
                 }
                 s.Display(bitacora);
@@ -432,7 +433,7 @@ namespace AutomatasII
 
                 if(l.Existe(nombre))
                 {
-                    s.Push(float.Parse(l.getValor(getContenido())),bitacora);
+                    s.Push(float.Parse(l.getValor(getContenido())), bitacora, linea, caracter);
                     s.Display(bitacora);
                     match(clasificaciones.identificador); //Validar existencia
                 }
@@ -443,7 +444,7 @@ namespace AutomatasII
             }
             else if (getClasificacion() == clasificaciones.numero)
             {
-                s.Push(float.Parse(getContenido()),bitacora);
+                s.Push(float.Parse(getContenido()), bitacora, linea, caracter);
                 s.Display(bitacora);
                 match(clasificaciones.numero);
             }

@@ -17,7 +17,7 @@ namespace AutomatasII
             elementos = new float[maxElementos];
         }
 
-        public void Push(float element, StreamWriter bitacora)
+        public void Push(float element, StreamWriter bitacora, int linea, int caracter)
         {   
             if (ultimo < maxElementos)
             {
@@ -26,11 +26,11 @@ namespace AutomatasII
             }
             else
             {
-                throw new Error(bitacora,"Error: Stack Overflow");
+                throw new Error(bitacora,"Error: Stack Overflow " + "(" + linea + ", " + caracter + ")");
             }
         }
 
-        public float Pop(StreamWriter bitacora)
+        public float Pop(StreamWriter bitacora,int linea, int caracter)
         {
             if (ultimo > 0)
             {
@@ -39,7 +39,7 @@ namespace AutomatasII
             }
             else
             {
-                throw new Error(bitacora,"Error: Stack Underflow");
+                throw new Error(bitacora,"Error: Stack Underflow " + "(" + linea + ", " + caracter + ")");
             }
         }
 
