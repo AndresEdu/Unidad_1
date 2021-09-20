@@ -99,8 +99,17 @@ namespace AutomatasII
             if (getClasificacion() == clasificaciones.asignacion)
             {   
                 match(clasificaciones.asignacion);
-                Expresion();
-                l.setValor(nombre,s.Pop(bitacora,linea,caracter).ToString());
+                
+                if(getClasificacion() == clasificaciones.cadena)
+                {
+                    l.setValor(nombre,getContenido());
+                    match(clasificaciones.cadena);
+                }
+                else
+                {
+                    Expresion();
+                    l.setValor(nombre,s.Pop(bitacora,linea,caracter).ToString());   
+                }
             }
 
             if (getContenido() == ",")
@@ -169,7 +178,7 @@ namespace AutomatasII
                 {
                     string entrada = Console.ReadLine();
                     match(clasificaciones.identificador); //Validar existencia
-                    l.setValor(nombre,entrada);
+                    l.setValor(nombre,entrada); 
                 }
                 else
                 {
@@ -274,7 +283,7 @@ namespace AutomatasII
                 throw new Error(bitacora, "Error de sintaxis: La constante (" + nombre + ") esta duplicada" + "(" + linea + ", " + caracter + ")");
             }
             
-            l.Inserta(nombre,TipodeVariable);
+            l.Inserta(nombre,TipodeVariable,true);
             match(clasificaciones.asignacion);  
 
             
