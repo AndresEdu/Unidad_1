@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-// :)) Requerimiento 1: Implementar las secuencias de escape: \n, \t cuando se imprime una cadena y 
-//                      eliminar las dobles comillas.
-// :)) Requerimiento 2: Levantar excepciones en la clase Stack.
-// :)) Requerimiento 3: Agregar el tipo de dato en el Inserta de ListaVariables.
-// :)) Requerimiento 4: Validar existencia o duplicidad de variables. Mensaje de error: 
-//                      "Error de sintaxis: La variable (x26) no ha sido declarada."
-//                      "Error de sintaxis: La variables (x26) está duplicada." 
-// :)) Requerimiento 5: Modificar el valor de la variable o constante al momento de su declaracion.
+
+// Requerimiento 1: Implementar el not en el if.
+// Requerimiento 2: Validar la asignacion de strings en instrucción.
+// Requerimiento 3: Implementar la comparacion de tiposdedatos en ListaIds.
+// Requerimiento 4: Validar los tipos de datos en la asignacion de cin.
+// Requerimiento 5: Implementar el cast.
 
 namespace AutomatasII
 {
@@ -17,6 +15,7 @@ namespace AutomatasII
     {
         Stack s;
         ListaVariables l;
+        Variable.tipo maxBytes;
         public Lenguaje()
         {
             s = new Stack(5);
@@ -69,22 +68,21 @@ namespace AutomatasII
             match("(");
             match(")");
 
-            BloqueInstrucciones();
+            BloqueInstrucciones(true);
         }
 
         // BloqueInstrucciones -> { Instrucciones }
-        private void BloqueInstrucciones()
+        private void BloqueInstrucciones(bool ejecuta)
         {
             match(clasificaciones.inicioBloque);
-            Instrucciones();
+            Instrucciones(ejecuta);
             match(clasificaciones.finBloque);
         }
 
         // Lista_IDs -> identificador (= Expresion)? (,Lista_IDs)? 
-        private void Lista_IDs(Variable.tipo Tipo)
+        private void Lista_IDs(Variable.tipo Tipo, bool ejecuta)
         {
             string nombre = getContenido();
-            
             if(!l.Existe(nombre))
             {
                 match(clasificaciones.identificador); //Validar duplicidad
@@ -102,25 +100,40 @@ namespace AutomatasII
                 
                 if(getClasificacion() == clasificaciones.cadena)
                 {
-                    l.setValor(nombre,getContenido());
-                    match(clasificaciones.cadena);
+                    if (Tipo == Variable.tipo.STRING)
+                    {
+                        match(clasificaciones.cadena);
+                        if (ejecuta)
+                        {
+                            l.setValor(nombre,getContenido());
+                        }
+                    }
+                    else
+                    {
+                        throw new Error(bitacora, "Error de semantico: No se puede Asignar un STRING a un  (" + Tipo + "). " + " (" + linea + ", " + caracter + ")");
+                    }
                 }
                 else
                 {
+                    //Requerimiento 3
+                    maxBytes = Variable.tipo.CHAR;
                     Expresion();
-                    l.setValor(nombre,s.Pop(bitacora,linea,caracter).ToString());   
+                    if (ejecuta)
+                    {
+                        l.setValor(nombre,s.Pop(bitacora,linea,caracter).ToString());   
+                    }
                 }
             }
 
             if (getContenido() == ",")
             {
                 match(",");
-                Lista_IDs(Tipo);
+                Lista_IDs(Tipo, ejecuta);
             }
         }
 
         // Variables -> tipoDato Lista_IDs; 
-        private void Variables()
+        private void Variables(bool ejecuta)
         {
             string TipoDato = getContenido();
             match(clasificaciones.tipoDato);
@@ -145,40 +158,44 @@ namespace AutomatasII
                     break;
             }
 
-            Lista_IDs(TipodeVariable);
+            Lista_IDs(TipodeVariable, ejecuta);
             match(clasificaciones.finSentencia);
         }
 
         // Instruccion -> (If | cin | cout | const | Variables | asignacion) ;
-        private void Instruccion()
+        private void Instruccion(bool ejecuta)
         {
             if (getContenido() == "do")
             {
-                DoWhile();
+                DoWhile(ejecuta);
             }
             else if (getContenido() == "while")
             {
-                While();
+                While(ejecuta);
             }
             else if (getContenido() == "for")
             {
-                For();
+                For(ejecuta);
             }
             else if (getContenido() == "if")
             {
-                If();
+                If(ejecuta);
             }
             else if (getContenido() == "cin")
             {
+                //Requerimiento 4
                 match("cin");
                 match(clasificaciones.flujoEntrada);
 
                 string nombre = getContenido(); 
                 if(l.Existe(nombre))
                 {
-                    string entrada = Console.ReadLine();
-                    match(clasificaciones.identificador); //Validar existencia
-                    l.setValor(nombre,entrada); 
+                    if (ejecuta)
+                    {
+                        match(clasificaciones.identificador); //Validar existencia
+                        string entrada = Console.ReadLine();
+                        l.setValor(nombre,entrada); 
+                    }
                 }
                 else
                 {
@@ -190,21 +207,21 @@ namespace AutomatasII
             else if (getContenido() == "cout")
             {
                 match("cout");
-                ListaFlujoSalida();
+                ListaFlujoSalida(ejecuta);
                 match(clasificaciones.finSentencia);
             }
             else if (getContenido() == "const")
             {
-                Constante();
+                Constante(ejecuta);
             }
             else if (getClasificacion() == clasificaciones.tipoDato)
             {
-                Variables();
+                Variables(ejecuta);
             }
             else
             {
+                
                 string nombre = getContenido();
-
                 if(l.Existe(nombre))
                 {
                     match(clasificaciones.identificador); //Validar existencia
@@ -215,39 +232,53 @@ namespace AutomatasII
                 }
 
                 match(clasificaciones.asignacion);
-                
-                string valor;
 
+                //requerimiento 2
+                string valor;
                 if (getClasificacion() == clasificaciones.cadena)
                 {
                     valor = getContenido();
                     match(clasificaciones.cadena);
                 }
-
                 else
                 {
+                    //requerimiento 3
+                    maxBytes = Variable.tipo.CHAR;
                     Expresion();
                     valor = s.Pop(bitacora,linea,caracter).ToString();
+
+                    if (TipodatoExpresion(float.Parse(valor)) > maxBytes)
+                    {
+                        maxBytes = TipodatoExpresion(float.Parse(valor));
+                    }
+
+                    if (maxBytes > l.getTipoDato(nombre))
+                    {
+                        throw new Error(bitacora, "Error de semantico: No se puede Asignar un ("+maxBytes+") a un (" + l.getTipoDato(nombre)+ "). " + " (" + linea + ", " + caracter + ")");    
+                    }
                 }
 
-                l.setValor(nombre, valor);
-                match(clasificaciones.finSentencia);
+                if (ejecuta)
+                {
+                    l.setValor(nombre, valor);
+                    match(clasificaciones.finSentencia);
+                }
             }
         }
 
         // Instrucciones -> Instruccion Instrucciones?
-        private void Instrucciones()
+        private void Instrucciones(bool ejecuta)
         {
-            Instruccion();
+            Instruccion(ejecuta);
 
             if (getClasificacion() != clasificaciones.finBloque)
             {
-                Instrucciones();
+                Instrucciones(ejecuta);
             }
         }
 
         // Constante -> const tipoDato identificador = numero | cadena;
-        private void Constante()
+        private void Constante(bool ejecuta)
         {
             match("const");
             string TipoDato = getContenido();
@@ -274,7 +305,7 @@ namespace AutomatasII
             }
 
             string nombre = getContenido();
-            if(!l.Existe(nombre))
+            if(!l.Existe(nombre) && ejecuta)
             {
                 match(clasificaciones.identificador); //Validar duplicidad
             }
@@ -286,15 +317,21 @@ namespace AutomatasII
             l.Inserta(nombre,TipodeVariable,true);
             match(clasificaciones.asignacion);  
 
-            
+                
             if (getClasificacion() == clasificaciones.numero)
             {
-                l.setValor(nombre,getContenido());  //Se le hace un Set al valor en la lista
+                if (ejecuta)
+                {
+                    l.setValor(nombre,getContenido());  //Se le hace un Set al valor en la lista
+                }
                 match(clasificaciones.numero);
             }
             else
             {
-                l.setValor(nombre,getContenido());  //Se le hace un Set al valor en la lista
+                if (ejecuta)
+                {
+                    l.setValor(nombre,getContenido());  //Se le hace un Set al valor en la lista
+                }
                 match(clasificaciones.cadena);
             }
 
@@ -302,14 +339,17 @@ namespace AutomatasII
         }
 
         // ListaFlujoSalida -> << cadena | identificador | numero (ListaFlujoSalida)?
-        private void ListaFlujoSalida()
+        private void ListaFlujoSalida(bool ejecuta)
         {
             match(clasificaciones.flujoSalida);
 
             if (getClasificacion() == clasificaciones.numero)
             {
-                Console.Write(getContenido());
-                match(clasificaciones.numero);  
+                if (ejecuta)
+                {
+                    Console.Write(getContenido());
+                    match(clasificaciones.numero);  
+                }
             }
             else if (getClasificacion() == clasificaciones.cadena)
             {
@@ -327,7 +367,12 @@ namespace AutomatasII
                 {
                     secuencias = secuencias.Replace("\\n","\n");
                 }
-                Console.Write(secuencias);
+
+                if (ejecuta)
+                {
+                    Console.Write(secuencias);
+                }
+
                 match(clasificaciones.cadena);
             }
             else
@@ -336,7 +381,10 @@ namespace AutomatasII
 
                 if(l.Existe(nombre))
                 {
-                    Console.Write(l.getValor(nombre));
+                    if (ejecuta)
+                    {
+                        Console.Write(l.getValor(nombre));
+                    }
                     match(clasificaciones.identificador); //Validar existencia
                 }
                 else
@@ -347,32 +395,71 @@ namespace AutomatasII
 
             if (getClasificacion() == clasificaciones.flujoSalida)
             {
-                ListaFlujoSalida();
+                ListaFlujoSalida(ejecuta);
             }
         }
 
         // If -> if (Condicion) { BloqueInstrucciones } (else BloqueInstrucciones)?
-        private void If()
+        private void If(bool ejecuta2)
         {
             match("if");
             match("(");
-            Condicion();
-            match(")");
-            BloqueInstrucciones();
+            bool ejecuta;
 
+            if (getContenido() == "!")
+            {
+                match(clasificaciones.operadorLogico);
+                match("(");
+                ejecuta = !Condicion();
+                match(")");
+            }
+            else
+            {
+                ejecuta = Condicion();
+            }
+        
+            match(")");
+            BloqueInstrucciones(ejecuta && ejecuta2);
+            //console.writeLine(ejecuta + " "+ ejecuta2);
             if (getContenido() == "else")
             {
                 match("else");
-                BloqueInstrucciones();
+                BloqueInstrucciones(!ejecuta && ejecuta2);
             }
         }
 
         // Condicion -> Expresion operadorRelacional Expresion
-        private void Condicion()
+        private bool Condicion()
         {
+            maxBytes = Variable.tipo.CHAR;
             Expresion();
+            float n1 = s.Pop(bitacora,linea,caracter);
+            string operador = getContenido(); 
             match(clasificaciones.operadorRelacional);
+            maxBytes = Variable.tipo.CHAR;
             Expresion();
+            float n2 = s.Pop(bitacora,linea,caracter);
+
+            switch (operador)
+            {
+                case ">":
+                    return n1 > n2;
+
+                case ">=":
+                    return n1 >= n2;
+
+                case "<":
+                    return n1 < n2;
+
+                case "<=":
+                    return n1 <= n2;
+
+                case "==":
+                    return n1 == n2;
+                     
+                default:
+                    return n1 != n2;              
+            } 
         }
 
         // x26 = (3+5)*8-(10-4)/2;
@@ -445,6 +532,11 @@ namespace AutomatasII
                     s.Push(float.Parse(l.getValor(getContenido())), bitacora, linea, caracter);
                     s.Display(bitacora);
                     match(clasificaciones.identificador); //Validar existencia
+
+                    if (l.getTipoDato(nombre) > maxBytes)
+                    {
+                        maxBytes = l.getTipoDato(nombre);
+                    }
                 }
                 else
                 {
@@ -455,18 +547,50 @@ namespace AutomatasII
             {
                 s.Push(float.Parse(getContenido()), bitacora, linea, caracter);
                 s.Display(bitacora);
+
+                if (TipodatoExpresion(float.Parse(getContenido())) > maxBytes)
+                {
+                    maxBytes = TipodatoExpresion(float.Parse(getContenido()));
+                }
+
                 match(clasificaciones.numero);
             }
             else
             {
                 match("(");
+
+                Variable.tipo TipoDato = Variable.tipo.CHAR;
+                bool HuboCast = false;
+
+                if (getClasificacion() == clasificaciones.tipoDato)
+                {
+                    HuboCast = true;
+                    TipoDato = determinarTipoDato(getContenido());
+                    match(clasificaciones.tipoDato);
+                    match(")");
+                    match("(");
+                }
                 Expresion();
                 match(")");
+
+                if (HuboCast) 
+                {
+                    //Hacer un pop y convertir ese numero al tipo dato y meterlo al stack.
+                    float n1 = s.Pop(bitacora,linea,caracter);
+                    //Para convertir un int a char se divide /256 y el residuo es el resultado del cast 256 = 0, 257 = 1,...  
+                    //Para convertir un float a int se divide /65536 y el residuo es el resultado del cast 
+                    //Para convertir un float a otro redondear el numero para eliminar la parte fraccional 
+                    //Para convertir un float a char se divide /65535 /256  y el residuo es el resultado del cast 256 = 0, 257 = 1,...
+                    //Para convertir a float n1 = n1 
+                    //n1 = cast(n1, TipoDato);
+                    s.Push(n1,bitacora,linea,caracter);
+                    maxBytes = TipoDato;
+                }
             }
         }
 
         // For -> for (identificador = Expresion; Condicion; identificador incrementoTermino) BloqueInstrucciones
-        private void For()
+        private void For(bool ejecuta)
         {
             match("for");
             match("(");
@@ -501,11 +625,11 @@ namespace AutomatasII
 
             match(")");
 
-            BloqueInstrucciones();
+            BloqueInstrucciones(ejecuta);
         }
 
         // While -> while (Condicion) BloqueInstrucciones
-        private void While()
+        private void While(bool ejecuta)
         {
             match("while");
 
@@ -513,15 +637,15 @@ namespace AutomatasII
             Condicion();
             match(")");
 
-            BloqueInstrucciones();
+            BloqueInstrucciones(ejecuta);
         }
 
         // DoWhile -> do BloqueInstrucciones while (Condicion);
-        private void DoWhile()
+        private void DoWhile(bool ejecuta)
         {
             match("do");
 
-            BloqueInstrucciones();
+            BloqueInstrucciones(ejecuta);
 
             match("while");
 
@@ -530,8 +654,47 @@ namespace AutomatasII
             match(")");
             match(clasificaciones.finSentencia);
         }
-        // x26 = (3 + 5) * 8 - (10 - 4) / 2
-        // x26 = 3 + 5 * 8 - 10 - 4 / 2
-        // x26 = 3 5 + 8 * 10 4 - 2 / -
+
+        private Variable.tipo TipodatoExpresion (float valor)
+        {
+            if (valor % 1 != 0)
+            {
+                return Variable.tipo.FLOAT;
+            }
+            else if (valor < 256)
+            {
+                return Variable.tipo.CHAR;
+            }
+            else if (valor < 65535)
+            {
+                return Variable.tipo.INT;   
+            }
+            return Variable.tipo.FLOAT;   
+        }
+        private Variable.tipo determinarTipoDato(string tipoDato)
+        {
+            Variable.tipo tipoVar;
+
+            switch(tipoDato)
+            {
+                case "int":
+                    tipoVar = Variable.tipo.INT;
+                    break;
+                
+                case "float":
+                    tipoVar = Variable.tipo.FLOAT;
+                    break;
+
+                case "string":
+                    tipoVar = Variable.tipo.STRING;
+                    break;
+
+                default:
+                    tipoVar = Variable.tipo.CHAR;  
+                    break;                  
+            }
+
+            return tipoVar;
+        }
     }
 }
