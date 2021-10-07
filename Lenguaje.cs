@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 
 
-// Requerimiento 1: Implementar el not en el if.
+// :))) Requerimiento 1: Implementar el not en el if.
 // Requerimiento 2: Validar la asignacion de strings en instrucción.
-// Requerimiento 3: Implementar la comparacion de tiposdedatos en ListaIds.
+// Requerimiento 3: Implementar la comparacion de tiposdedatos en ListaIDs.
 // Requerimiento 4: Validar los tipos de datos en la asignacion de cin.
 // Requerimiento 5: Implementar el cast.
 
@@ -220,7 +220,6 @@ namespace AutomatasII
             }
             else
             {
-                
                 string nombre = getContenido();
                 if(l.Existe(nombre))
                 {
@@ -235,10 +234,23 @@ namespace AutomatasII
 
                 //requerimiento 2
                 string valor;
+                
                 if (getClasificacion() == clasificaciones.cadena)
                 {
                     valor = getContenido();
-                    match(clasificaciones.cadena);
+
+                    if (l.getTipoDato(nombre) == Variable.tipo.STRING)
+                    {
+                        match(clasificaciones.cadena);
+                        if (ejecuta)
+                        {
+                            l.setValor(nombre,getContenido());
+                        }
+                    }
+                    else
+                    {
+                        throw new Error(bitacora, "Error de semantico: No se puede Asignar un STRING a un (" + l.getTipoDato(nombre) + "). " + " (" + linea + ", " + caracter + ")");
+                    }
                 }
                 else
                 {
