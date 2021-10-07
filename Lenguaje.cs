@@ -5,7 +5,7 @@ using System.Text;
 
 // :))) Requerimiento 1: Implementar el not en el if.
 // :))) Requerimiento 2: Validar la asignacion de strings en instrucción.
-// Requerimiento 3: Implementar la comparacion de tiposdedatos en ListaIDs.
+// :))) Requerimiento 3: Implementar la comparacion de tiposdedatos en ListaIDs.
 // Requerimiento 4: Validar los tipos de datos en la asignacion de cin.
 // Requerimiento 5: Implementar el cast.
 
@@ -207,6 +207,16 @@ namespace AutomatasII
                     {
                         match(clasificaciones.identificador); //Validar existencia
                         string entrada = Console.ReadLine();
+                        
+                        if (TipodatoExpresion(float.Parse(entrada)) > maxBytes)
+                        {
+                            maxBytes = TipodatoExpresion(float.Parse(entrada));
+                        }
+                        if (maxBytes > l.getTipoDato(nombre))
+                        {
+                            throw new Error(bitacora, "Error semantico: No se puede Asignar un ("+maxBytes+") a un ("+l.getTipoDato(nombre)+ ")." + " (" + linea + ", " + caracter + ")");    
+                        }
+
                         l.setValor(nombre,entrada); 
                     }
                 }
