@@ -4,7 +4,7 @@ using System.Text;
 
 
 // :))) Requerimiento 1: Implementar el not en el if.
-// Requerimiento 2: Validar la asignacion de strings en instrucción.
+// :))) Requerimiento 2: Validar la asignacion de strings en instrucción.
 // Requerimiento 3: Implementar la comparacion de tiposdedatos en ListaIDs.
 // Requerimiento 4: Validar los tipos de datos en la asignacion de cin.
 // Requerimiento 5: Implementar el cast.
@@ -110,7 +110,7 @@ namespace AutomatasII
                     }
                     else
                     {
-                        throw new Error(bitacora, "Error de semantico: No se puede Asignar un STRING a un  (" + Tipo + "). " + " (" + linea + ", " + caracter + ")");
+                        throw new Error(bitacora, "Error semantico: No se puede Asignar un STRING a un (" + Tipo + "). " + " (" + linea + ", " + caracter + ")");
                     }
                 }
                 else
@@ -118,9 +118,22 @@ namespace AutomatasII
                     //Requerimiento 3
                     maxBytes = Variable.tipo.CHAR;
                     Expresion();
+                    string valor;
+                    valor = s.Pop(bitacora,linea,caracter).ToString();
+
+                    if (TipodatoExpresion(float.Parse(valor)) > maxBytes)
+                    {
+                        maxBytes = TipodatoExpresion(float.Parse(valor));
+                    }
+
+                    if (maxBytes > l.getTipoDato(nombre))
+                    {
+                        throw new Error(bitacora, "Error semantico: No se puede Asignar un ("+maxBytes+") a un ("+l.getTipoDato(nombre)+ ")." + " (" + linea + ", " + caracter + ")");    
+                    }
+
                     if (ejecuta)
                     {
-                        l.setValor(nombre,s.Pop(bitacora,linea,caracter).ToString());   
+                        l.setValor(nombre,valor);   
                     }
                 }
             }
@@ -234,7 +247,7 @@ namespace AutomatasII
 
                 //requerimiento 2
                 string valor;
-                
+
                 if (getClasificacion() == clasificaciones.cadena)
                 {
                     valor = getContenido();
@@ -249,7 +262,7 @@ namespace AutomatasII
                     }
                     else
                     {
-                        throw new Error(bitacora, "Error de semantico: No se puede Asignar un STRING a un (" + l.getTipoDato(nombre) + "). " + " (" + linea + ", " + caracter + ")");
+                        throw new Error(bitacora, "Error semantico: No se puede Asignar un STRING a un ("+ l.getTipoDato(nombre) +")." + " (" + linea + ", " + caracter + ")");
                     }
                 }
                 else
@@ -266,7 +279,7 @@ namespace AutomatasII
 
                     if (maxBytes > l.getTipoDato(nombre))
                     {
-                        throw new Error(bitacora, "Error de semantico: No se puede Asignar un ("+maxBytes+") a un (" + l.getTipoDato(nombre)+ "). " + " (" + linea + ", " + caracter + ")");    
+                        throw new Error(bitacora, "Error semantico: No se puede Asignar un ("+maxBytes+") a un (" + l.getTipoDato(nombre)+ "). " + " (" + linea + ", " + caracter + ")");    
                     }
                 }
 
