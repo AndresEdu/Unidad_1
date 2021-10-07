@@ -6,8 +6,8 @@ using System.Text;
 // :))) Requerimiento 1: Implementar el not en el if.
 // :))) Requerimiento 2: Validar la asignacion de strings en instrucción.
 // :))) Requerimiento 3: Implementar la comparacion de tiposdedatos en ListaIDs.
-// Requerimiento 4: Validar los tipos de datos en la asignacion de cin.
-// Requerimiento 5: Implementar el cast.
+// :))) Requerimiento 4: Validar los tipos de datos en la asignacion de cin.
+// :))) Requerimiento 5: Implementar el cast.
 
 namespace AutomatasII
 {
@@ -16,6 +16,7 @@ namespace AutomatasII
         Stack s;
         ListaVariables l;
         Variable.tipo maxBytes;
+        
         public Lenguaje()
         {
             s = new Stack(5);
@@ -89,7 +90,7 @@ namespace AutomatasII
             }
             else
             {
-                throw new Error(bitacora, "Error de sintaxis:La variable  (" + nombre + ") esta Duplicada. " + "(" + linea + ", " + caracter + ")");
+                throw new Error(bitacora, "Error de sintaxis: La variable  (" + nombre + ") esta Duplicada. " + "(" + linea + ", " + caracter + ")");
             }
 
             l.Inserta(nombre, Tipo);
@@ -116,8 +117,9 @@ namespace AutomatasII
                 else
                 {
                     //Requerimiento 3
-                    maxBytes = Variable.tipo.CHAR;
                     Expresion();
+                    maxBytes = Variable.tipo.CHAR;
+
                     string valor;
                     valor = s.Pop(bitacora,linea,caracter).ToString();
 
@@ -126,9 +128,9 @@ namespace AutomatasII
                         maxBytes = TipodatoExpresion(float.Parse(valor));
                     }
 
-                    if (maxBytes > l.getTipoDato(nombre))
+                    if (maxBytes > Tipo)
                     {
-                        throw new Error(bitacora, "Error semantico: No se puede Asignar un ("+maxBytes+") a un ("+l.getTipoDato(nombre)+ ")." + " (" + linea + ", " + caracter + ")");    
+                        throw new Error(bitacora, "Error semantico: No se puede Asignar un ("+maxBytes+") a un ("+l.getTipoDato(valor)+ ")." + " (" + linea + ", " + caracter + ")");      
                     }
 
                     if (ejecuta)
@@ -207,7 +209,8 @@ namespace AutomatasII
                     {
                         match(clasificaciones.identificador); //Validar existencia
                         string entrada = Console.ReadLine();
-                        
+                        maxBytes = Variable.tipo.CHAR;
+
                         if (TipodatoExpresion(float.Parse(entrada)) > maxBytes)
                         {
                             maxBytes = TipodatoExpresion(float.Parse(entrada));
@@ -216,7 +219,6 @@ namespace AutomatasII
                         {
                             throw new Error(bitacora, "Error semantico: No se puede Asignar un ("+maxBytes+") a un ("+l.getTipoDato(nombre)+ ")." + " (" + linea + ", " + caracter + ")");    
                         }
-
                         l.setValor(nombre,entrada); 
                     }
                 }
@@ -244,6 +246,7 @@ namespace AutomatasII
             else
             {
                 string nombre = getContenido();
+                
                 if(l.Existe(nombre))
                 {
                     match(clasificaciones.identificador); //Validar existencia
@@ -296,8 +299,8 @@ namespace AutomatasII
                 if (ejecuta)
                 {
                     l.setValor(nombre, valor);
-                    match(clasificaciones.finSentencia);
                 }
+                match(clasificaciones.finSentencia);
             }
         }
 
@@ -455,7 +458,6 @@ namespace AutomatasII
         
             match(")");
             BloqueInstrucciones(ejecuta && ejecuta2);
-            //console.writeLine(ejecuta + " "+ ejecuta2);
             if (getContenido() == "else")
             {
                 match("else");
@@ -504,6 +506,7 @@ namespace AutomatasII
             Termino();
             MasTermino();
         }
+
         // MasTermino -> (operadorTermino Termino)?
         private void MasTermino()
         {
@@ -527,12 +530,14 @@ namespace AutomatasII
                 s.Display(bitacora);
             }
         }
+
         // Termino -> Factor PorFactor
         private void Termino()
         {
             Factor();
             PorFactor();
         }
+
         // PorFactor -> (operadorFactor Factor)?
         private void PorFactor()
         {
@@ -555,6 +560,7 @@ namespace AutomatasII
                 s.Display(bitacora);
             }
         }
+
         // Factor -> identificador | numero | ( Expresion )
         private void Factor()
         {
@@ -610,15 +616,10 @@ namespace AutomatasII
 
                 if (HuboCast) 
                 {
-                    //Hacer un pop y convertir ese numero al tipo dato y meterlo al stack.
-                    float n1 = s.Pop(bitacora,linea,caracter);
-                    //Para convertir un int a char se divide /256 y el residuo es el resultado del cast 256 = 0, 257 = 1,...  
-                    //Para convertir un float a int se divide /65536 y el residuo es el resultado del cast 
-                    //Para convertir un float a otro redondear el numero para eliminar la parte fraccional 
-                    //Para convertir un float a char se divide /65535 /256  y el residuo es el resultado del cast 256 = 0, 257 = 1,...
-                    //Para convertir a float n1 = n1 
-                    //n1 = cast(n1, TipoDato);
-                    s.Push(n1,bitacora,linea,caracter);
+                    //Requerimiento 5
+                    float n1 = s.Pop(bitacora,linea,caracter);//Hacer un pop 
+                    n1 = cast(TipoDato,n1);//convertir ese numero al tipo dato
+                    s.Push(n1,bitacora,linea,caracter);//meterlo al stack.
                     maxBytes = TipoDato;
                 }
             }
@@ -706,6 +707,7 @@ namespace AutomatasII
             }
             return Variable.tipo.FLOAT;   
         }
+
         private Variable.tipo determinarTipoDato(string tipoDato)
         {
             Variable.tipo tipoVar;
@@ -730,6 +732,49 @@ namespace AutomatasII
             }
 
             return tipoVar;
+        }
+
+        private float cast(Variable.tipo TipoDato, float n1)//char int
+        {
+
+            switch(TipodatoExpresion(n1))
+            {
+                case Variable.tipo.INT: //1
+                    //Para convertir un int a char se divide /256 y el residuo es el resultado del cast 256 = 0, 257 = 1,...  
+                    if(TipoDato == Variable.tipo.CHAR)
+                    {
+                        n1 = n1 % 256;
+                    }
+                    break;
+                
+                case Variable.tipo.FLOAT:
+
+                    //Para convertir float a float n1 = n1 
+                    if(TipoDato == Variable.tipo.FLOAT)
+                    {
+                        return n1;
+                    }
+                    //Para convertir un float a int se divide /65536 y el residuo es el resultado del cast 
+                    else if(TipoDato == Variable.tipo.INT) 
+                    {
+                        n1 = (int)Math.Round(n1); 
+                        n1 = n1 % 65536; 
+                    }
+                    //Para convertir un float a char se divide /65535 /256  y el residuo es el resultado del cast 256 = 0, 257 = 1,...
+                    else if(TipoDato == Variable.tipo.CHAR)
+                    {
+                        n1 = (char)Math.Round(n1); 
+                        n1 = n1 % 65536;
+                        n1 = n1 % 256;
+                    }
+                    //Para convertir un float a otro redondear el numero para eliminar la parte fraccional 
+                    else
+                    {
+                        n1 = (int)Math.Round(n1);
+                    }
+                    break;
+            }
+            return n1;
         }
     }
 }
